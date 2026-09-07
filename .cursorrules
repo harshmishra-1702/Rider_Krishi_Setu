@@ -1,0 +1,21 @@
+# KrishiSetu Flutter Development Rules
+
+# Language & Framework Rules
+- Framework: Flutter 3.x with Dart 3 (sound null safety mandatory).
+- State Management: Use flutter_riverpod (prefer AsyncNotifier / StateNotifier).
+- Architecture: Feature-first Clean Architecture (features/feature_name/presentation, domain, data).
+
+# Code Style & Quality
+- Never hardcode strings in UI widgets; use localizations or constant resource files.
+- Keep build methods clean: split widgets into sub-widgets rather than massive single trees.
+- Handle all AsyncValue states (data, loading, error) explicitly in UI views.
+- Offline-First: All status-changing actions (pickup scan, GPS coordinates) must commit to local SQLite first, then dispatch network requests.
+
+# Privacy & Security Guardrails
+- NEVER store, hardcode, or display sensitive government ID numbers in source code, logs, or UI mocks. Use standard sanitized tokens or placeholders (e.g. '[Aadhaar Redacted]').
+- Mask phone numbers in the UI (e.g., +91 98XXX-XX123).
+
+# Dependencies & Native Features
+- Use 'mobile_scanner' for camera QR reading.
+- Use 'geolocator' for location queries; always verify location permissions and GPS service status prior to querying.
+- Use 'flutter_tts' for audio accessibility; bind text prompts to the active locale.
