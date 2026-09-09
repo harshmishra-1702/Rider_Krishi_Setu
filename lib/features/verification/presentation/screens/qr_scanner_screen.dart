@@ -233,6 +233,17 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
         title: const Text('Scan Farm Batch QR'),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          tooltip: 'Back to Route',
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/route');
+            }
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.flash_on),

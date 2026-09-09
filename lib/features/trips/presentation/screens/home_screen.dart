@@ -82,6 +82,114 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
+  void _showSupportOptionsModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: AppColors.surface,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBorder,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.headset_mic, color: AppColors.primary, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '24/7 Driver Support & Helpline',
+                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Direct line for on-road transit & dock delivery issues',
+                          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.phone_in_talk, color: Colors.green, size: 22),
+                ),
+                title: const Text('Call Operations Hotline (Toll-Free)',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                subtitle: const Text('1800-209-8899 • Instant connection with fleet desk',
+                    style: TextStyle(fontSize: 12)),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('📞 Connecting to KrishiSetu 24/7 Operations Desk (1800-209-8899)...'),
+                      backgroundColor: AppColors.primary,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.assignment_late_outlined, color: AppColors.accent, size: 22),
+                ),
+                title: const Text('File Grievance / Dock Delay Ticket',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                subtitle: const Text('Report buyer gate waiting, tare weight dispute, or breakdown',
+                    style: TextStyle(fontSize: 12)),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  context.push('/complaint');
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authStateProvider);
@@ -123,7 +231,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 unreadNotificationsCount: unreadNotifs,
                 onNotificationTap: () => showNotificationsBottomSheet(context),
                 onLanguageTap: () => showLanguageBottomSheet(context, ref),
-                onSupportTap: () => context.push('/complaint'),
+                onSupportTap: () => _showSupportOptionsModal(context),
               onToggleOnline: () {
                 final nextOnlineState = !isOnline;
                 ref.read(isDriverOnlineProvider.notifier).state = nextOnlineState;

@@ -253,8 +253,87 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
 
+          // ── Help, Grievance & Operations Support ────────────────
+          _buildSectionHeader('Help, Grievance & 24/7 Operations Support'),
+          Card(
+            margin: const EdgeInsets.only(top: 8, bottom: 16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.accent.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.assignment_late_outlined, color: AppColors.accent, size: 20),
+                  ),
+                  title: const Text('File Grievance / Report Issue',
+                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                  subtitle: const Text('Report buyer gate delay, tare weight discrepancy, or transit fault',
+                      style: TextStyle(fontSize: 12)),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                  onTap: () => context.push('/complaint'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.phone_in_talk, color: Colors.green, size: 20),
+                  ),
+                  title: const Text('24/7 Fleet Operations Hotline',
+                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                  subtitle: const Text('Toll-Free 1800-209-8899 • Immediate admin call support',
+                      style: TextStyle(fontSize: 12)),
+                  trailing: const Icon(Icons.call, size: 18, color: Colors.green),
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('📞 Calling KrishiSetu Operations Hotline: 1800-209-8899...'),
+                        backgroundColor: AppColors.primary,
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.verified, color: AppColors.primary, size: 20),
+                  ),
+                  title: const Text('Ticket #TKT-ADM-8921',
+                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                  subtitle: const Text('Dock Delay Claim: ₹250.00 reimbursed to Escrow wallet',
+                      style: TextStyle(fontSize: 12)),
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: AppColors.statusDelivered.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text('RESOLVED',
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.statusDelivered)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           // ── Language & App Preferences ────────────────────────────
-          _buildSectionHeader('App Settings'),
+          _buildSectionHeader('App Settings & Diagnostics'),
           Card(
             margin: const EdgeInsets.only(top: 8, bottom: 20),
             shape:
@@ -269,15 +348,6 @@ class ProfileScreen extends ConsumerWidget {
                       '${selectedLang.nativeName} (${selectedLang.name})'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => showLanguageBottomSheet(context, ref),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.headset_mic_outlined, color: AppColors.primary),
-                  title: const Text('Grievance & Support Desk',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Direct ticket dispatch to System Admin'),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () => context.push('/complaint'),
                 ),
                 const Divider(height: 1),
                 ListTile(

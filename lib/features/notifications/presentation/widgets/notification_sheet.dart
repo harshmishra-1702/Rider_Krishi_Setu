@@ -87,6 +87,20 @@ class NotificationSheet extends ConsumerWidget {
                     ],
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.add_alert, size: 20, color: AppColors.primary),
+                  tooltip: 'Simulate Incoming Alert (Demo)',
+                  onPressed: () {
+                    ref.read(notificationsProvider.notifier).simulateNewAlert();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('🔔 Simulated live notification received!'),
+                        backgroundColor: AppColors.primary,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
                 if (notifications.isNotEmpty) ...[
                   TextButton(
                     onPressed: () {
@@ -136,6 +150,14 @@ class NotificationSheet extends ConsumerWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                           ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              ref.read(notificationsProvider.notifier).simulateNewAlert();
+                            },
+                            icon: const Icon(Icons.add_alert, size: 16),
+                            label: const Text('Add Demo Alert'),
+                          ),
                         ],
                       ),
                     ),
@@ -156,6 +178,37 @@ class NotificationSheet extends ConsumerWidget {
                             if (item.actionRoute != null) {
                               Navigator.pop(context);
                               context.push(item.actionRoute!);
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                  title: Row(
+                                    children: [
+                                      Icon(item.type.icon, color: item.type.color),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(item.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                      ),
+                                    ],
+                                  ),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(item.timeAgo, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                                      const SizedBox(height: 10),
+                                      Text(item.message, style: const TextStyle(fontSize: 13.5, height: 1.4)),
+                                    ],
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () => Navigator.pop(ctx),
+                                      child: const Text('Close'),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }
                           },
                           child: Container(

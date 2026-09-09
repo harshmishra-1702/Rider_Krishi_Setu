@@ -46,6 +46,18 @@ class _PhotoCaptureScreenState extends ConsumerState<PhotoCaptureScreen> {
       appBar: AppBar(
         title: const Text('Proof of Delivery Photo'),
         backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          tooltip: 'Back to Handover Verification',
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/otp-delivery');
+            }
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),

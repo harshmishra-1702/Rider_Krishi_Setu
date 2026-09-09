@@ -17,26 +17,74 @@ class NotificationsNotifier extends StateNotifier<List<DriverNotification>> {
     DriverNotification(
       id: 'NOTIF-002',
       title: 'Instant Payout Settled (RazorpayX)',
-      message: '₹3,000.00 successfully transferred to your linked UPI ID (suresh.yadav@upi) via RazorpayX Smart Escrow.',
+      message: '₹8,450.00 successfully secured & disbursed to your Escrow wallet via RazorpayX Smart Escrow.',
       type: NotificationType.payoutCredited,
-      timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+      timestamp: DateTime.now().subtract(const Duration(hours: 1)),
       actionRoute: '/earnings',
     ),
     DriverNotification(
       id: 'NOTIF-003',
-      title: 'Inward Produce Clearance',
-      message: '500kg Tomato crates passed electronic weighbridge and grade-A quality check at Reliance Fresh Receiving Dock 3.',
+      title: 'Dock Slot Reserved (Blinkit #12)',
+      message: 'Express unloading slot confirmed for 750kg Red Onions at MIDC Ambad Quick-Commerce Bay 2.',
+      type: NotificationType.qualityClearance,
+      timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+    ),
+    DriverNotification(
+      id: 'NOTIF-004',
+      title: 'Inward Produce Quality Passed',
+      message: '500kg Tomato crates passed electronic weighbridge and grade-A quality check at Reliance Fresh Dock 3.',
       type: NotificationType.qualityClearance,
       timestamp: DateTime.now().subtract(const Duration(hours: 3)),
     ),
     DriverNotification(
-      id: 'NOTIF-004',
+      id: 'NOTIF-005',
       title: 'Smart Route Optimization',
       message: 'AI Traffic Engine bypassed Highway 3 toll jam. Saved approx 18 minutes on Sawargaon connector.',
       type: NotificationType.routeAlert,
-      timestamp: DateTime.now().subtract(const Duration(hours: 5)),
+      timestamp: DateTime.now().subtract(const Duration(hours: 4)),
+    ),
+    DriverNotification(
+      id: 'NOTIF-006',
+      title: 'Grievance Compensation Credited',
+      message: 'Ticket #TKT-ADM-8921: ₹250.00 dock waiting delay compensation approved and added to Escrow wallet.',
+      type: NotificationType.systemSupport,
+      timestamp: DateTime.now().subtract(const Duration(hours: 6)),
+      actionRoute: '/earnings',
     ),
   ];
+
+  static int _simCounter = 0;
+
+  void simulateNewAlert() {
+    _simCounter++;
+    final alerts = [
+      (
+        title: 'Priority Farm Pickup Assigned',
+        message: 'Sawargaon Farmer (Vijay More) has 750kg Table Grapes packaged and ready for loading.',
+        type: NotificationType.tripOffer,
+        route: '/route',
+      ),
+      (
+        title: 'RazorpayX Milestone Advance Released',
+        message: 'Advance fuel allowance of ₹1,200.00 released to your UPI account.',
+        type: NotificationType.payoutCredited,
+        route: '/earnings',
+      ),
+      (
+        title: 'Cold Storage Bay Pre-Cooled',
+        message: 'Symbiosis Hostel Mess cold room has pre-cooled and is standing by for fruit crates.',
+        type: NotificationType.qualityClearance,
+        route: null,
+      ),
+    ];
+    final selected = alerts[_simCounter % alerts.length];
+    addNotification(
+      title: selected.title,
+      message: selected.message,
+      type: selected.type,
+      actionRoute: selected.route,
+    );
+  }
 
   void markAsRead(String id) {
     state = state.map((n) => n.id == id ? n.copyWith(isRead: true) : n).toList();

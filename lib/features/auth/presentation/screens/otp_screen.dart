@@ -31,7 +31,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   @override
   void initState() {
     super.initState();
-    _phoneController.text = '9876543210';
   }
 
   @override
@@ -236,35 +235,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             const SizedBox(height: 24),
             if (!_otpSent) ...[
               _buildPhoneField(strings),
-              const SizedBox(height: 14),
-
-              // Demo quick-fill test chips
-              Wrap(
-                spacing: 8,
-                runSpacing: 6,
-                children: [
-                  ActionChip(
-                    avatar: const Icon(Icons.check_circle, size: 14, color: AppColors.primary),
-                    label: const Text('Demo: 9876543210 (Suresh)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
-                    backgroundColor: AppColors.primary.withOpacity(0.08),
-                    onPressed: () {
-                      setState(() {
-                        _phoneController.text = '9876543210';
-                      });
-                    },
-                  ),
-                  ActionChip(
-                    avatar: const Icon(Icons.info_outline, size: 14, color: AppColors.accent),
-                    label: const Text('Test Unregistered: 9111222333', style: TextStyle(fontSize: 11)),
-                    backgroundColor: AppColors.accent.withOpacity(0.08),
-                    onPressed: () {
-                      setState(() {
-                        _phoneController.text = '9111222333';
-                      });
-                    },
-                  ),
-                ],
-              ),
               const SizedBox(height: 20),
 
               SizedBox(
