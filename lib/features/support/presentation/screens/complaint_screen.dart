@@ -259,6 +259,7 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
             const SizedBox(height: 6),
             DropdownButtonFormField<String>(
               value: _selectedTrip,
+              isExpanded: true,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.local_shipping, color: AppColors.primary),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -272,24 +273,41 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
                     child: Text(
                       '${activeTrip.tripId} (Active Route)',
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   )
                 else
                   const DropdownMenuItem(
                     value: 'TRIP-KS-8921 (Reliance Fresh DC)',
-                    child: Text('TRIP-KS-8921 (Active Reliance Fresh DC)'),
+                    child: Text(
+                      'TRIP-KS-8921 (Active Reliance Fresh DC)',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ),
                 const DropdownMenuItem(
                   value: 'TRIP-KS-8840 (Blinkit Dark Store Hub)',
-                  child: Text('TRIP-KS-8840 (Past Settle)'),
+                  child: Text(
+                    'TRIP-KS-8840 (Past Settle)',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
                 const DropdownMenuItem(
                   value: 'TRIP-KS-8715 (Symbiosis Hostel Mess)',
-                  child: Text('TRIP-KS-8715 (Past Settle)'),
+                  child: Text(
+                    'TRIP-KS-8715 (Past Settle)',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
                 const DropdownMenuItem(
                   value: 'General Platform / Account Issue',
-                  child: Text('General Platform / Account Issue'),
+                  child: Text(
+                    'General Platform / Account Issue',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
               ],
               onChanged: (val) {
@@ -306,6 +324,7 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
             const SizedBox(height: 6),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
+              isExpanded: true,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.category, color: AppColors.primary),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -313,7 +332,14 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
                 fillColor: AppColors.surface,
               ),
               items: _categories.map((c) {
-                return DropdownMenuItem(value: c, child: Text(c, overflow: TextOverflow.ellipsis));
+                return DropdownMenuItem(
+                  value: c,
+                  child: Text(
+                    c,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                );
               }).toList(),
               onChanged: (val) {
                 if (val != null) setState(() => _selectedCategory = val);
@@ -329,6 +355,7 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
             const SizedBox(height: 6),
             DropdownButtonFormField<String>(
               value: _selectedUrgency,
+              isExpanded: true,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.priority_high, color: AppColors.accent),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -336,7 +363,14 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
                 fillColor: AppColors.surface,
               ),
               items: _urgencyLevels.map((u) {
-                return DropdownMenuItem(value: u, child: Text(u, overflow: TextOverflow.ellipsis));
+                return DropdownMenuItem(
+                  value: u,
+                  child: Text(
+                    u,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                );
               }).toList(),
               onChanged: (val) {
                 if (val != null) setState(() => _selectedUrgency = val);

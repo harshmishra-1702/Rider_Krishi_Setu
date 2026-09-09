@@ -253,12 +253,11 @@ class _TripHistoryScreenState extends ConsumerState<TripHistoryScreen> {
           ),
           const SizedBox(height: 14),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildStatItem('34', 'Completed Trips', Icons.local_shipping),
-              _buildStatItem('₹74,500', 'Total Earned', Icons.currency_rupee),
-              _buildStatItem('4.8 ★', 'Rider Rating', Icons.star),
-              _buildStatItem('1,240', 'Ton-Km Haul', Icons.scale),
+              Expanded(child: _buildStatItem('34', 'Trips Done', Icons.local_shipping)),
+              Expanded(child: _buildStatItem('₹74,500', 'Total Earned', Icons.currency_rupee)),
+              Expanded(child: _buildStatItem('4.8 ★', 'Rating', Icons.star)),
+              Expanded(child: _buildStatItem('1,240', 'Ton-Km', Icons.scale)),
             ],
           ),
         ],
@@ -268,6 +267,7 @@ class _TripHistoryScreenState extends ConsumerState<TripHistoryScreen> {
 
   Widget _buildStatItem(String value, String label, IconData icon) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: AppColors.accentLight, size: 20),
         const SizedBox(height: 4),
@@ -276,8 +276,11 @@ class _TripHistoryScreenState extends ConsumerState<TripHistoryScreen> {
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w800,
-            fontSize: 16,
+            fontSize: 15,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
         ),
         Text(
           label,
@@ -285,6 +288,9 @@ class _TripHistoryScreenState extends ConsumerState<TripHistoryScreen> {
             color: Colors.white70,
             fontSize: 11,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -391,20 +397,24 @@ class _TripHistoryScreenState extends ConsumerState<TripHistoryScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  record.vehicleTier,
-                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                Expanded(
+                  child: Text(
+                    record.vehicleTier,
+                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: AppColors.statusDelivered.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       Icon(Icons.check_circle, size: 12, color: AppColors.statusDelivered),
                       SizedBox(width: 4),
                       Text(
@@ -467,15 +477,25 @@ class _TripHistoryScreenState extends ConsumerState<TripHistoryScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Row 3: Metrics chips (Distance, Duration, Rating, Combined Pot)
+            // Row 3: Metrics chips (Distance, Duration, Rating, Audit Log)
             Row(
               children: [
-                _buildSmallChip(Icons.straighten, '${record.distanceKm.toStringAsFixed(1)} km'),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildSmallChip(Icons.straighten, '${record.distanceKm.toStringAsFixed(1)} km'),
+                        const SizedBox(width: 6),
+                        _buildSmallChip(Icons.timer_outlined, '~${record.durationMin} min'),
+                        const SizedBox(width: 6),
+                        _buildSmallChip(Icons.star, '$avgRating ★', color: AppColors.accent),
+                      ],
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 8),
-                _buildSmallChip(Icons.timer_outlined, '~${record.durationMin} mins'),
-                const SizedBox(width: 8),
-                _buildSmallChip(Icons.star, '$avgRating ★', color: AppColors.accent),
-                const Spacer(),
                 TextButton.icon(
                   onPressed: () {
                     showModalBottomSheet(

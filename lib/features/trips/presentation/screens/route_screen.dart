@@ -540,63 +540,65 @@ class _WaypointCard extends StatelessWidget {
             ),
             const Divider(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.background,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '🌾 ${waypoint.cropName}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                Expanded(
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          '🌾 ${waypoint.cropName}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.background,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '⚖️ ${waypoint.weightKg.toStringAsFixed(0)} kg',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          '⚖️ ${waypoint.weightKg.toStringAsFixed(0)} kg',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.accent.withOpacity(0.14),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: AppColors.accent.withOpacity(0.4)),
-                      ),
-                      child: Text(
-                        '🏷️ Bag ${waypoint.batchId}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withOpacity(0.14),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppColors.accent.withOpacity(0.4)),
+                        ),
+                        child: Text(
+                          '🏷️ Bag ${waypoint.batchId}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 if (isDone)
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -619,8 +621,8 @@ class _WaypointCard extends StatelessWidget {
                     onPressed: onScan,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
-                      minimumSize: const Size(110, 38),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      minimumSize: const Size(100, 38),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       textStyle: const TextStyle(fontSize: 13),
                     ),
                     child: Text(scanLabel ?? 'Scan QR'),

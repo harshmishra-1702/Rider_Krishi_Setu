@@ -407,47 +407,53 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
   Widget _buildOtpFields() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(4, (index) {
-        return SizedBox(
-          width: 64,
-          height: 68,
-          child: TextField(
-            controller: _otpControllers[index],
-            focusNode: _otpFocusNodes[index],
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            maxLength: 1,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: const TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: index == 0 ? 0 : 5,
+              right: index == 3 ? 0 : 5,
             ),
-            decoration: InputDecoration(
-              counterText: '',
-              contentPadding: EdgeInsets.zero,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.cardBorder, width: 2),
+            child: SizedBox(
+              height: 68,
+              child: TextField(
+                controller: _otpControllers[index],
+                focusNode: _otpFocusNodes[index],
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                maxLength: 1,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+                decoration: InputDecoration(
+                  counterText: '',
+                  contentPadding: EdgeInsets.zero,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        const BorderSide(color: AppColors.cardBorder, width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 2.5),
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                ),
+                onChanged: (val) {
+                  if (val.length == 1 && index < 3) {
+                    _otpFocusNodes[index + 1].requestFocus();
+                  } else if (val.isEmpty && index > 0) {
+                    _otpFocusNodes[index - 1].requestFocus();
+                  }
+                  setState(() {});
+                },
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2.5),
-              ),
-              filled: true,
-              fillColor: AppColors.surface,
             ),
-            onChanged: (val) {
-              if (val.length == 1 && index < 3) {
-                _otpFocusNodes[index + 1].requestFocus();
-              } else if (val.isEmpty && index > 0) {
-                _otpFocusNodes[index - 1].requestFocus();
-              }
-              setState(() {});
-            },
           ),
         );
       }),

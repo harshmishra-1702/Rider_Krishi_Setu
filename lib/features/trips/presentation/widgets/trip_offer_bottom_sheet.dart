@@ -143,22 +143,28 @@ class _TripOfferBottomSheetState extends ConsumerState<TripOfferBottomSheet> {
           // Trip info pills
           Row(
             children: [
-              _InfoPill(
-                icon: Icons.scale,
-                label: '${(trip.totalWeightKg / 1000).toStringAsFixed(1)}T load',
-                color: AppColors.primary,
+              Expanded(
+                child: _InfoPill(
+                  icon: Icons.scale,
+                  label: '${(trip.totalWeightKg / 1000).toStringAsFixed(1)}T load',
+                  color: AppColors.primary,
+                ),
               ),
               const SizedBox(width: 8),
-              _InfoPill(
-                icon: Icons.location_on,
-                label: '${trip.waypoints.length} stops',
-                color: AppColors.accent,
+              Expanded(
+                child: _InfoPill(
+                  icon: Icons.location_on,
+                  label: '${trip.waypoints.length} stops',
+                  color: AppColors.accent,
+                ),
               ),
               const SizedBox(width: 8),
-              _InfoPill(
-                icon: Icons.timer,
-                label: '${trip.estimatedDurationMin}min',
-                color: AppColors.statusInTransit,
+              Expanded(
+                child: _InfoPill(
+                  icon: Icons.timer,
+                  label: '${trip.estimatedDurationMin}min',
+                  color: AppColors.statusInTransit,
+                ),
               ),
             ],
           ),
@@ -271,23 +277,27 @@ class _InfoPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
       decoration: BoxDecoration(
         color: color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: color.withOpacity(0.25)),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: color, size: 14),
           const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

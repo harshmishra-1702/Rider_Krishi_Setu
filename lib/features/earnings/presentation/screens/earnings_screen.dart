@@ -568,9 +568,13 @@ class EarningsScreen extends ConsumerWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Text(
-                    '~${record.durationMin} mins • ${record.distanceKm.toStringAsFixed(1)} km • ${record.vehicleTier}',
-                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  Expanded(
+                    child: Text(
+                      '~${record.durationMin} mins • ${record.distanceKm.toStringAsFixed(1)} km • ${record.vehicleTier}',
+                      style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ),
                 ],
               ),

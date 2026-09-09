@@ -1171,49 +1171,55 @@ class _OtpDeliveryScreenState extends ConsumerState<OtpDeliveryScreen> {
 
   Widget _buildOtpInputBoxes({bool isEnabled = true}) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(4, (index) {
-        return SizedBox(
-          width: 70,
-          height: 72,
-          child: TextField(
-            controller: _otpControllers[index],
-            focusNode: _otpFocusNodes[index],
-            enabled: isEnabled,
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            maxLength: 1,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w800,
-              color: isEnabled ? AppColors.textPrimary : Colors.grey,
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: index == 0 ? 0 : 5,
+              right: index == 3 ? 0 : 5,
             ),
-            decoration: InputDecoration(
-              counterText: '',
-              contentPadding: EdgeInsets.zero,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: isEnabled ? AppColors.cardBorder : Colors.grey.shade300,
-                  width: 2,
+            child: SizedBox(
+              height: 68,
+              child: TextField(
+                controller: _otpControllers[index],
+                focusNode: _otpFocusNodes[index],
+                enabled: isEnabled,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                maxLength: 1,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  color: isEnabled ? AppColors.textPrimary : Colors.grey,
                 ),
+                decoration: InputDecoration(
+                  counterText: '',
+                  contentPadding: EdgeInsets.zero,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(
+                      color: isEnabled ? AppColors.cardBorder : Colors.grey.shade300,
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 2.5),
+                  ),
+                  filled: true,
+                  fillColor: isEnabled ? AppColors.surface : Colors.grey.shade100,
+                ),
+                onChanged: (val) {
+                  if (val.length == 1 && index < 3) {
+                    _otpFocusNodes[index + 1].requestFocus();
+                  } else if (val.isEmpty && index > 0) {
+                    _otpFocusNodes[index - 1].requestFocus();
+                  }
+                  setState(() {});
+                },
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2.5),
-              ),
-              filled: true,
-              fillColor: isEnabled ? AppColors.surface : Colors.grey.shade100,
             ),
-            onChanged: (val) {
-              if (val.length == 1 && index < 3) {
-                _otpFocusNodes[index + 1].requestFocus();
-              } else if (val.isEmpty && index > 0) {
-                _otpFocusNodes[index - 1].requestFocus();
-              }
-              setState(() {});
-            },
           ),
         );
       }),
