@@ -16,6 +16,8 @@ import '../widgets/driver_status_header.dart';
 import '../../../../core/widgets/language_bottom_sheet.dart';
 import '../../../notifications/presentation/providers/notification_providers.dart';
 import '../../../notifications/presentation/widgets/notification_sheet.dart';
+import 'package:geolocator/geolocator.dart';
+import '../../../../core/services/location_service.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -30,6 +32,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _secondsRemaining = 10;
   bool _isSearching = false;
   bool _showTransparentButton = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initLocation(userInitiated: false);
+    });
+  }
+
+  Future<void> _initLocation({bool userInitiated = false}) async {
+    final locService = ref.read(locationServiceProvider);
+    final result = await locService.checkAndRequestPermission();
+    if (!mounted) return;
+
+    if (result == LocationCheckResult.serviceDisabled) {
+      if (userInitiated) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('⚠️ GPS is turned off. Please turn on Location in Settings.'),
+            backgroundColor: AppColors.danger,
+            action: SnackBarAction(
+              label: 'Settings',
+              textColor: Colors.white,
+              onPressed: () => locService.openLocationSettings(),
+            ),
+          ),
+        );
+      }
+      return;
+    }
+
+    if (result == LocationCheckResult.permissionDeniedForever) {
+      if (userInitiated) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('⚠️ Location permission is permanently denied. Please enable in App Settings.'),
+            backgroundColor: AppColors.danger,
+            action: SnackBarAction(
+              label: 'Settings',
+              textColor: Colors.white,
+              onPressed: () => locService.openAppSettings(),
+            ),
+          ),
+        );
+      }
+      return;
+    }
+
+    if (result == LocationCheckResult.granted) {
+      final pos = await locService.getCurrentPosition();
+      if (pos != null && mounted) {
+        ref.read(driverLivePositionProvider.notifier).state = pos;
+        try {
+          _mapController.move(LatLng(pos.latitude, pos.longitude), 14.5);
+        } catch (_) {}
+        if (userInitiated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('📍 Map centered on current GPS location.'),
+              backgroundColor: AppColors.primary,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -200,6 +269,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final driver = authState is AuthAuthenticated ? authState.driver : null;
     final unreadNotifs = ref.watch(unreadNotificationsCountProvider);
+    final livePos = ref.watch(driverLivePositionProvider);
 
     // Center map on driver position if stream fires
     locationAsync.whenData((pos) {
@@ -208,13 +278,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       } catch (_) {}
     });
 
+    ref.listen<Position?>(driverLivePositionProvider, (_, nextPos) {
+      if (nextPos != null) {
+        try {
+          _mapController.move(LatLng(nextPos.latitude, nextPos.longitude), 14.5);
+        } catch (_) {}
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
           // ── Map Viewport (Full edge-to-edge) ──────────────────────
           Positioned.fill(
-            child: _buildMap(locationAsync),
+            child: _buildMap(locationAsync, livePos),
           ),
 
           // ── Status Header Overlay ─────────────────────────────────
@@ -236,6 +314,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 final nextOnlineState = !isOnline;
                 ref.read(isDriverOnlineProvider.notifier).state = nextOnlineState;
                 if (nextOnlineState) {
+                  _initLocation(userInitiated: false);
                   _startOfferDelay();
                 } else {
                   _countdownTimer?.cancel();
@@ -365,6 +444,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
 
+          // ── GPS Recenter Floating Button ─────────────────────────
+          Positioned(
+            right: 16,
+            bottom: 230,
+            child: Material(
+              elevation: 4,
+              shape: const CircleBorder(),
+              color: AppColors.surface,
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () => _initLocation(userInitiated: true),
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.cardBorder, width: 1.5),
+                  ),
+                  child: const Icon(
+                    Icons.my_location,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
           // ── Bottom Info Panel ─────────────────────────────────────
           Align(
             alignment: Alignment.bottomCenter,
@@ -443,8 +550,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildMap(AsyncValue locationAsync) {
-    LatLng center = const LatLng(20.0059, 73.7799); // Nashik default hub
+  Widget _buildMap(AsyncValue locationAsync, Position? livePos) {
+    LatLng center = livePos != null
+        ? LatLng(livePos.latitude, livePos.longitude)
+        : const LatLng(20.0059, 73.7799); // Nashik default hub
 
     locationAsync.whenData((pos) {
       if (pos != null) {
@@ -456,7 +565,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       mapController: _mapController,
       options: MapOptions(
         initialCenter: center,
-        initialZoom: 13.5,
+        initialZoom: 14.0,
         interactionOptions: const InteractionOptions(
           flags: InteractiveFlag.all,
         ),

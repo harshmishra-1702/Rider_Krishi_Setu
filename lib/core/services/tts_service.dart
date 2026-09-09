@@ -2,15 +2,29 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+enum TtsSpeed {
+  slow(0.38, '0.8x Slow & Clear'),
+  normal(0.48, '1.0x Normal (Standard)'),
+  fast(0.58, '1.2x Faster');
+
+  final double rate;
+  final String label;
+  const TtsSpeed(this.rate, this.label);
+}
+
 class TtsService {
   final FlutterTts _flutterTts = FlutterTts();
   bool _isInitialized = false;
   List<dynamic> _availableVoices = [];
+  double _speechRate = 0.48; // 0.48 translates to 0.96x - 1.0x normal speech on Android (FlutterTTS Android multiplies rate by 2.0)
+
+  double get currentSpeechRate => _speechRate;
 
   Future<void> init() async {
     if (_isInitialized) return;
     try {
-      await _flutterTts.setSpeechRate(0.85); // slightly slower for clear rural comprehension
+      // 0.48 produces standard 1.0x natural human talking speed on Android
+      await _flutterTts.setSpeechRate(_speechRate);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
 
@@ -23,6 +37,17 @@ class TtsService {
 
       _isInitialized = true;
     } catch (_) {}
+  }
+
+  Future<void> setSpeechRate(double rate) async {
+    _speechRate = rate;
+    try {
+      await _flutterTts.setSpeechRate(rate);
+    } catch (_) {}
+  }
+
+  Future<void> setSpeed(TtsSpeed speed) async {
+    await setSpeechRate(speed.rate);
   }
 
   bool _hasVoiceFor(String langPrefix) {
@@ -59,12 +84,14 @@ class TtsService {
       }
 
       await _flutterTts.setLanguage(targetLang);
+      await _flutterTts.setSpeechRate(_speechRate);
       await _flutterTts.stop();
       await _flutterTts.speak(targetText);
     } catch (e) {
       // Fallback to en-IN in case of synthesizer exception
       try {
         await _flutterTts.setLanguage('en-IN');
+        await _flutterTts.setSpeechRate(_speechRate);
         await _flutterTts.speak(text);
       } catch (_) {}
     }
@@ -211,3 +238,19 @@ final ttsServiceProvider = Provider<TtsService>((ref) {
   service.init();
   return service;
 });
+
+class TtsSpeedNotifier extends StateNotifier<TtsSpeed> {
+  final TtsService _service;
+  TtsSpeedNotifier(this._service) : super(TtsSpeed.normal);
+
+  Future<void> changeSpeed(TtsSpeed speed) async {
+    state = speed;
+    await _service.setSpeed(speed);
+  }
+}
+
+final ttsSpeedProvider =
+    StateNotifierProvider<TtsSpeedNotifier, TtsSpeed>((ref) {
+  return TtsSpeedNotifier(ref.watch(ttsServiceProvider));
+});
+

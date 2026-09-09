@@ -143,37 +143,66 @@ class ActiveTripNotifier extends StateNotifier<RideTrip?> {
   void clearTrip() => state = null;
 }
 
+// ── Driver live position state (can be updated by GPS button, stream, or fetch) ──
+final driverLivePositionProvider = StateProvider<Position?>((ref) => null);
+
 // ── Driver online status ───────────────────────────────────────────────────
 final isDriverOnlineProvider = StateProvider<bool>((ref) => false);
 
 // ── Location stream ────────────────────────────────────────────────────────
 final locationStreamProvider = StreamProvider<Position>((ref) async* {
-  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) return;
+  try {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
 
-  LocationPermission permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) return;
-  }
-  if (permission == LocationPermission.deniedForever) return;
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
+    if (permission == LocationPermission.deniedForever) return;
 
-  yield* Geolocator.getPositionStream(
-    locationSettings: const LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 10,
-    ),
-  );
+    await for (final pos in Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      ),
+    )) {
+      ref.read(driverLivePositionProvider.notifier).state = pos;
+      yield pos;
+    }
+  } catch (_) {}
 });
 
 // ── Current position (single fetch) ───────────────────────────────────────
 final currentPositionProvider = FutureProvider<Position?>((ref) async {
   try {
-    return await Geolocator.getCurrentPosition(
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return null;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return null;
+    }
+    if (permission == LocationPermission.deniedForever) return null;
+
+    final pos = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
-      timeLimit: const Duration(seconds: 5),
+      timeLimit: const Duration(seconds: 8),
     );
+    ref.read(driverLivePositionProvider.notifier).state = pos;
+    return pos;
   } catch (_) {
-    return null;
+    try {
+      final lastPos = await Geolocator.getLastKnownPosition();
+      if (lastPos != null) {
+        ref.read(driverLivePositionProvider.notifier).state = lastPos;
+      }
+      return lastPos;
+    } catch (_) {
+      return null;
+    }
   }
 });
+

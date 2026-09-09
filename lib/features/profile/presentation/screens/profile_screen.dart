@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/language_bottom_sheet.dart';
+import '../../../../core/services/tts_service.dart';
+import '../../../../core/services/location_service.dart';
+import '../../../trips/presentation/providers/trip_providers.dart';
 import '../../../auth/domain/models.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 
@@ -14,6 +17,8 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final selectedLang = ref.watch(selectedLanguageProvider);
+    final ttsSpeed = ref.watch(ttsSpeedProvider);
+    final livePos = ref.watch(driverLivePositionProvider);
     final driver = authState is AuthAuthenticated
         ? authState.driver
         : const Driver(
@@ -351,6 +356,69 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
+                  leading: const Icon(Icons.record_voice_over, color: AppColors.primary),
+                  title: const Text('Voice Speech Speed',
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: Text('${ttsSpeed.label} • Tap to adjust & preview'),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () => _showVoiceSpeedSheet(context, ref),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.my_location, color: AppColors.primary),
+                  title: const Text('GPS & Location Status',
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: Text(livePos != null
+                      ? 'Live GPS Fix: ${livePos.latitude.toStringAsFixed(4)}°N, ${livePos.longitude.toStringAsFixed(4)}°E'
+                      : 'Tap to check permission & update GPS'),
+                  trailing: const Icon(Icons.refresh, color: AppColors.primary),
+                  onTap: () async {
+                    final loc = ref.read(locationServiceProvider);
+                    final res = await loc.checkAndRequestPermission();
+                    if (res == LocationCheckResult.serviceDisabled) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('⚠️ GPS is turned off. Please turn on Location in Settings.'),
+                            backgroundColor: AppColors.danger,
+                            action: SnackBarAction(
+                              label: 'Settings',
+                              textColor: Colors.white,
+                              onPressed: () => loc.openLocationSettings(),
+                            ),
+                          ),
+                        );
+                      }
+                    } else if (res == LocationCheckResult.permissionDeniedForever) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('⚠️ Location permission permanently denied. Open App Settings to allow.'),
+                            backgroundColor: AppColors.danger,
+                            action: SnackBarAction(
+                              label: 'App Settings',
+                              textColor: Colors.white,
+                              onPressed: () => loc.openAppSettings(),
+                            ),
+                          ),
+                        );
+                      }
+                    } else if (res == LocationCheckResult.granted) {
+                      final pos = await loc.getCurrentPosition();
+                      if (pos != null && context.mounted) {
+                        ref.read(driverLivePositionProvider.notifier).state = pos;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('📍 GPS verified: ${pos.latitude.toStringAsFixed(4)}°N, ${pos.longitude.toStringAsFixed(4)}°E'),
+                            backgroundColor: AppColors.primary,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
                   leading: const Icon(Icons.sync, color: AppColors.primary),
                   title: const Text('Offline Sync Status',
                       style: TextStyle(fontWeight: FontWeight.w600)),
@@ -502,6 +570,91 @@ class ProfileScreen extends ConsumerWidget {
       trailing: trailingIcon != null
           ? Icon(trailingIcon, color: trailingColor, size: 20)
           : null,
+    );
+  }
+
+  void _showVoiceSpeedSheet(BuildContext context, WidgetRef ref) {
+    final currentSpeed = ref.read(ttsSpeedProvider);
+    final selectedLang = ref.read(selectedLanguageProvider);
+    final tts = ref.read(ttsServiceProvider);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBorder,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Voice Speech Speed',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Adjust talking speed for route guidance and delivery instructions',
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 16),
+              ...TtsSpeed.values.map((speed) {
+                final isSelected = currentSpeed == speed;
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                    color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                  ),
+                  title: Text(
+                    speed.label,
+                    style: TextStyle(
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.volume_up, color: AppColors.primary),
+                    tooltip: 'Preview voice at this speed',
+                    onPressed: () async {
+                      await ref.read(ttsSpeedProvider.notifier).changeSpeed(speed);
+                      tts.speak('KrishiSetu speech pace set to ${speed.label}',
+                          languageCode: selectedLang.ttsLocale);
+                    },
+                  ),
+                  onTap: () async {
+                    await ref.read(ttsSpeedProvider.notifier).changeSpeed(speed);
+                    if (ctx.mounted) Navigator.pop(ctx);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Voice speed updated to ${speed.label}'),
+                          backgroundColor: AppColors.primary,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
