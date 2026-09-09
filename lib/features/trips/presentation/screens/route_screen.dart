@@ -40,10 +40,11 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
     final allPickupsCompleted =
         trip.waypoints.isNotEmpty && trip.waypoints.every((w) => w.isPickedUp);
 
-    // Build polyline points: driver/first stop through all waypoints to destination
+    // Build polyline points: driver/first stop through all waypoints and delivery stops
     final List<LatLng> routePoints = [
       ...trip.waypoints.map((w) => w.latLng),
-      trip.destination.latLng,
+      ...trip.deliveryStops.map((d) => d.latLng),
+      if (trip.deliveryStops.isEmpty) trip.destination.latLng,
     ];
 
     return Scaffold(
@@ -93,7 +94,7 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
               context.push('/otp-delivery');
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Simulated: Arrived at Mandi dock with all produce crates!'),
+                  content: Text('Simulated: Arrived at Bulk Buyer dock with all produce crates!'),
                   backgroundColor: AppColors.primary,
                 ),
               );
@@ -160,24 +161,56 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
                         ),
                       );
                     }),
-                    // Mandi / Final Destination marker
-                    Marker(
-                      point: trip.destination.latLng,
-                      width: 44,
-                      height: 44,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2.5),
+                    // Bulk Buyer Delivery Markers
+                    ...trip.deliveryStops.map((ds) {
+                      final isDone = ds.isDelivered;
+                      return Marker(
+                        point: ds.latLng,
+                        width: 42,
+                        height: 42,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isDone
+                                ? AppColors.statusDelivered
+                                : const Color(0xFF0C2340),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2.2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: isDone
+                                ? const Icon(Icons.done_all,
+                                    size: 20, color: Colors.white)
+                                : const Icon(Icons.storefront,
+                                    size: 20, color: Colors.white),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.warehouse,
-                          color: Colors.white,
-                          size: 22,
+                      );
+                    }),
+                    if (trip.deliveryStops.isEmpty)
+                      Marker(
+                        point: trip.destination.latLng,
+                        width: 44,
+                        height: 44,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2.5),
+                          ),
+                          child: const Icon(
+                            Icons.storefront,
+                            color: Colors.white,
+                            size: 22,
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ],
@@ -258,7 +291,7 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                               ),
                               Text(
-                                'Fast-forward all farm pickups to test Mandi unloading & OTP',
+                                'Fast-forward all farm pickups to test Bulk Buyer unloading & OTP',
                                 style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
                               ),
                             ],
@@ -277,7 +310,7 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
                             context.push('/otp-delivery');
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Simulated all farm pickups done! Arrived at Mandi for Handover.'),
+                                content: Text('Simulated all farm pickups done! Arrived at Bulk Buyer dock for Handover.'),
                                 backgroundColor: AppColors.primary,
                               ),
                             );
@@ -311,14 +344,40 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
                         );
                       },
                     )),
-                _DestinationCard(
-                  destination: trip.destination,
-                  allPickupsCompleted: allPickupsCompleted,
-                  proceedLabel: strings.proceedToDelivery,
-                  onProceedToDelivery: () {
-                    context.push('/otp-delivery');
-                  },
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.storefront, color: Color(0xFF0C2340), size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Bulk Buyer Delivery Stops (${trip.deliveryStops.length})',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                ...trip.deliveryStops.map(
+                  (ds) => _DeliveryStopCard(
+                    delivery: ds,
+                    allPickupsCompleted: allPickupsCompleted,
+                    onProceed: () => context.push('/otp-delivery'),
+                  ),
+                ),
+                if (trip.deliveryStops.isEmpty)
+                  _DestinationCard(
+                    destination: trip.destination,
+                    allPickupsCompleted: allPickupsCompleted,
+                    proceedLabel: strings.proceedToDelivery,
+                    onProceedToDelivery: () {
+                      context.push('/otp-delivery');
+                    },
+                  ),
               ],
             ),
           ),
@@ -614,7 +673,7 @@ class _DestinationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Final Drop-off (Mandi)',
+                        'Bulk Buyer Delivery Hub',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -648,6 +707,138 @@ class _DestinationCard extends StatelessWidget {
                 label: Text(proceedLabel ?? 'Start Geofenced Delivery Check'),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 44),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DeliveryStopCard extends StatelessWidget {
+  final DeliveryWaypoint delivery;
+  final bool allPickupsCompleted;
+  final VoidCallback onProceed;
+
+  const _DeliveryStopCard({
+    required this.delivery,
+    required this.allPickupsCompleted,
+    required this.onProceed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDone = delivery.isDelivered;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      color: isDone
+          ? AppColors.statusDelivered.withOpacity(0.06)
+          : (allPickupsCompleted ? AppColors.primary.withOpacity(0.04) : AppColors.surface),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: isDone
+              ? AppColors.statusDelivered
+              : (allPickupsCompleted ? AppColors.primary : AppColors.cardBorder),
+          width: 1.5,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: isDone ? AppColors.statusDelivered : const Color(0xFF0C2340),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isDone ? Icons.check : Icons.storefront,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0C2340).withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              delivery.buyerType,
+                              style: const TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF0C2340),
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            'Stop #${delivery.stopOrder}',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        delivery.buyerName,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${delivery.cropName} • ${delivery.weightKg.toStringAsFixed(0)} kg (Batch ID: ${delivery.batchId})',
+              style: const TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              delivery.address,
+              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            ),
+            if (allPickupsCompleted && !isDone) ...[
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: onProceed,
+                  icon: const Icon(Icons.verified, size: 18),
+                  label: Text('Verify ${delivery.buyerName.split(',').first} Handover OTP'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
                 ),
               ),
             ],

@@ -223,6 +223,100 @@ class PickupWaypoint {
       };
 }
 
+class DeliveryWaypoint {
+  final String stopId;
+  final int stopOrder;
+  final String buyerName;
+  final String buyerType; // e.g. 'Retail Supermarket DC', 'Dark Store Hub', 'University Hostel Mess'
+  final String address;
+  final String contactPhone;
+  final double latitude;
+  final double longitude;
+  final double weightKg;
+  final String cropName;
+  final String batchId;
+  final bool isDelivered;
+  final DateTime? deliveredAt;
+  final String handoverOtp;
+
+  const DeliveryWaypoint({
+    required this.stopId,
+    required this.stopOrder,
+    required this.buyerName,
+    required this.buyerType,
+    required this.address,
+    required this.contactPhone,
+    required this.latitude,
+    required this.longitude,
+    required this.weightKg,
+    required this.cropName,
+    required this.batchId,
+    this.isDelivered = false,
+    this.deliveredAt,
+    this.handoverOtp = '4092',
+  });
+
+  LatLng get latLng => LatLng(latitude, longitude);
+
+  DeliveryWaypoint copyWith({
+    bool? isDelivered,
+    DateTime? deliveredAt,
+  }) =>
+      DeliveryWaypoint(
+        stopId: stopId,
+        stopOrder: stopOrder,
+        buyerName: buyerName,
+        buyerType: buyerType,
+        address: address,
+        contactPhone: contactPhone,
+        latitude: latitude,
+        longitude: longitude,
+        weightKg: weightKg,
+        cropName: cropName,
+        batchId: batchId,
+        isDelivered: isDelivered ?? this.isDelivered,
+        deliveredAt: deliveredAt ?? this.deliveredAt,
+        handoverOtp: handoverOtp,
+      );
+
+  factory DeliveryWaypoint.fromJson(Map<String, dynamic> json) =>
+      DeliveryWaypoint(
+        stopId: json['stop_id'] as String? ?? 'DELIV-001',
+        stopOrder: json['stop_order'] as int? ?? 1,
+        buyerName: json['buyer_name'] as String? ?? 'Bulk Buyer DC',
+        buyerType: json['buyer_type'] as String? ?? 'Commercial Buyer',
+        address: json['address'] as String? ?? '',
+        contactPhone: json['contact_phone'] as String? ?? '+919876500000',
+        latitude: (json['latitude'] as num?)?.toDouble() ?? 20.0059,
+        longitude: (json['longitude'] as num?)?.toDouble() ?? 73.7799,
+        weightKg: (json['weight_kg'] as num?)?.toDouble() ?? 500.0,
+        cropName: json['crop_name'] as String? ?? 'Produce',
+        batchId: json['batch_id'] as String? ?? '#4092',
+        isDelivered: json['is_delivered'] as bool? ?? false,
+        deliveredAt: json['delivered_at'] != null
+            ? DateTime.tryParse(json['delivered_at'] as String)
+            : null,
+        handoverOtp: json['handover_otp'] as String? ?? '4092',
+      );
+
+  Map<String, dynamic> toJson() => {
+        'stop_id': stopId,
+        'stop_order': stopOrder,
+        'buyer_name': buyerName,
+        'buyer_type': buyerType,
+        'address': address,
+        'contact_phone': contactPhone,
+        'latitude': latitude,
+        'longitude': longitude,
+        'weight_kg': weightKg,
+        'crop_name': cropName,
+        'batch_id': batchId,
+        'is_delivered': isDelivered,
+        'delivered_at': deliveredAt?.toIso8601String(),
+        'handover_otp': handoverOtp,
+      };
+}
+
 class RideTrip {
   final String tripId;
   final String vehicleTier;
@@ -233,6 +327,7 @@ class RideTrip {
   final double distanceKm;
   final List<PickupWaypoint> waypoints;
   final DropoffLocation destination;
+  final List<DeliveryWaypoint> deliveryStops;
   final List<TonKmSplit> tonKmSplits;
   final DateTime assignedAt;
   final DateTime? completedAt;
@@ -254,6 +349,7 @@ class RideTrip {
     required this.distanceKm,
     required this.waypoints,
     required this.destination,
+    this.deliveryStops = const [],
     required this.tonKmSplits,
     required this.assignedAt,
     this.completedAt,
@@ -279,9 +375,24 @@ class RideTrip {
           ? waypoints.firstWhere((w) => !w.isPickedUp)
           : null;
 
+  int get pendingDeliveriesCount =>
+      deliveryStops.where((d) => !d.isDelivered).length;
+
+  int get completedDeliveriesCount =>
+      deliveryStops.where((d) => d.isDelivered).length;
+
+  bool get allDeliveriesDone =>
+      deliveryStops.isNotEmpty && deliveryStops.every((d) => d.isDelivered);
+
+  DeliveryWaypoint? get nextDeliveryStop =>
+      deliveryStops.where((d) => !d.isDelivered).isNotEmpty
+          ? deliveryStops.firstWhere((d) => !d.isDelivered)
+          : null;
+
   RideTrip copyWith({
     TripStatus? status,
     List<PickupWaypoint>? waypoints,
+    List<DeliveryWaypoint>? deliveryStops,
     DateTime? completedAt,
     double? buyerLogisticsFee,
     double? farmerPooledFee,
@@ -297,6 +408,7 @@ class RideTrip {
         distanceKm: distanceKm,
         waypoints: waypoints ?? this.waypoints,
         destination: destination,
+        deliveryStops: deliveryStops ?? this.deliveryStops,
         tonKmSplits: tonKmSplits,
         assignedAt: assignedAt,
         completedAt: completedAt ?? this.completedAt,
@@ -307,8 +419,32 @@ class RideTrip {
 
   factory RideTrip.fromJson(Map<String, dynamic> json) {
     final waypointsJson = json['waypoints'] as List<dynamic>? ?? [];
+    final deliveryJson = json['delivery_stops'] as List<dynamic>? ?? [];
     final splitsJson = json['ton_km_splits'] as List<dynamic>? ?? [];
     final totalCost = (json['total_trip_cost'] as num).toDouble();
+    final dest = DropoffLocation.fromJson(
+        json['destination'] as Map<String, dynamic>);
+
+    final stops = deliveryJson.isNotEmpty
+        ? deliveryJson
+            .map((d) => DeliveryWaypoint.fromJson(d as Map<String, dynamic>))
+            .toList()
+        : [
+            DeliveryWaypoint(
+              stopId: 'DELIV-001',
+              stopOrder: 1,
+              buyerName: dest.name,
+              buyerType: 'Bulk Buyer Distribution Center',
+              address: dest.address,
+              contactPhone: dest.contactPhone ?? '+919823451122',
+              latitude: dest.latitude,
+              longitude: dest.longitude,
+              weightKg: (json['total_weight_kg'] as num?)?.toDouble() ?? 500.0,
+              cropName: 'Assorted Fresh Produce',
+              batchId: '#4092',
+              handoverOtp: '4092',
+            ),
+          ];
 
     return RideTrip(
       tripId: json['trip_id'] as String,
@@ -321,8 +457,8 @@ class RideTrip {
       waypoints: waypointsJson
           .map((w) => PickupWaypoint.fromJson(w as Map<String, dynamic>))
           .toList(),
-      destination: DropoffLocation.fromJson(
-          json['destination'] as Map<String, dynamic>),
+      destination: dest,
+      deliveryStops: stops,
       tonKmSplits: splitsJson
           .map((s) => TonKmSplit.fromJson(s as Map<String, dynamic>))
           .toList(),
@@ -351,6 +487,7 @@ class RideTrip {
         'distance_km': distanceKm,
         'waypoints': waypoints.map((w) => w.toJson()).toList(),
         'destination': destination.toJson(),
+        'delivery_stops': deliveryStops.map((d) => d.toJson()).toList(),
         'ton_km_splits': tonKmSplits.map((s) => s.toJson()).toList(),
         'assigned_at': assignedAt.toIso8601String(),
         'completed_at': completedAt?.toIso8601String(),

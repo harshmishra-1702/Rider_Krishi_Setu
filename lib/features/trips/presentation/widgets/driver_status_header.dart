@@ -1,4 +1,4 @@
-﻿// lib/features/trips/presentation/widgets/driver_status_header.dart
+// lib/features/trips/presentation/widgets/driver_status_header.dart
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../auth/domain/models.dart';
@@ -9,6 +9,8 @@ class DriverStatusHeader extends StatelessWidget {
   final VoidCallback onToggleOnline;
   final VoidCallback? onSupportTap;
   final VoidCallback? onLanguageTap;
+  final VoidCallback? onNotificationTap;
+  final int unreadNotificationsCount;
   final String? onlineLabel;
   final String? offlineLabel;
 
@@ -19,6 +21,8 @@ class DriverStatusHeader extends StatelessWidget {
     required this.onToggleOnline,
     this.onSupportTap,
     this.onLanguageTap,
+    this.onNotificationTap,
+    this.unreadNotificationsCount = 0,
     this.onlineLabel,
     this.offlineLabel,
   });
@@ -92,6 +96,42 @@ class DriverStatusHeader extends StatelessWidget {
               ],
             ),
           ),
+          // Notification Bell with Badge
+          if (onNotificationTap != null)
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.notifications_outlined, color: AppColors.primary, size: 21),
+                  tooltip: 'Notifications',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  onPressed: onNotificationTap,
+                ),
+                if (unreadNotificationsCount > 0)
+                  Positioned(
+                    right: 4,
+                    top: 4,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: AppColors.danger,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(minWidth: 15, minHeight: 15),
+                      child: Text(
+                        unreadNotificationsCount > 9 ? '9+' : '$unreadNotificationsCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           if (onLanguageTap != null)
             IconButton(
               icon: const Icon(Icons.language, color: AppColors.primary, size: 20),

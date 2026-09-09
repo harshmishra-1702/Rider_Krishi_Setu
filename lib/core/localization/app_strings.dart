@@ -44,6 +44,17 @@ class AppStrings {
   final String tonKmFormulaDesc;
   final String listenAudio;
 
+  // Navigation & New Sections
+  final String home;
+  final String history;
+  final String earnings;
+  final String profile;
+  final String notifications;
+  final String markAllRead;
+  final String clearAll;
+  final String bulkBuyerDelivery;
+  final String razorpaySecured;
+
   const AppStrings({
     required this.selectRoleTitle,
     required this.selectRoleSubtitle,
@@ -85,6 +96,15 @@ class AppStrings {
     required this.tonKmFormulaTitle,
     required this.tonKmFormulaDesc,
     required this.listenAudio,
+    required this.home,
+    required this.history,
+    required this.earnings,
+    required this.profile,
+    required this.notifications,
+    required this.markAllRead,
+    required this.clearAll,
+    required this.bulkBuyerDelivery,
+    required this.razorpaySecured,
   });
 
   static const english = AppStrings(
@@ -118,7 +138,7 @@ class AppStrings {
     milestones: 'Sequential Farm Milestones',
     scanQr: 'Scan Batch QR',
     callFarmer: 'Call Farmer',
-    proceedToDelivery: 'Proceed to Mandi Handover',
+    proceedToDelivery: 'Proceed to Bulk Buyer Delivery',
     geofenceCheckPassed: 'Geofence Check Passed (Within 100m)',
     producePhoto: 'Mandatory Produce Proof Photo',
     buyerOtp: 'Enter Buyer 4-Digit Handover OTP',
@@ -128,6 +148,15 @@ class AppStrings {
     tonKmFormulaTitle: 'Fair Shared-Route Payout (Ton-Km)',
     tonKmFormulaDesc: 'Cost is mathematically divided between farmers: Ci = Total Cost × (Wi × Di) / Σ (Wj × Dj)',
     listenAudio: 'Listen Instructions',
+    home: 'Home',
+    history: 'History',
+    earnings: 'Earnings',
+    profile: 'Profile',
+    notifications: 'Notifications',
+    markAllRead: 'Mark all read',
+    clearAll: 'Clear all',
+    bulkBuyerDelivery: 'Bulk Buyer Delivery',
+    razorpaySecured: 'Instant Payouts Powered by RazorpayX Escrow',
   );
 
   static const hindi = AppStrings(
@@ -161,7 +190,7 @@ class AppStrings {
     milestones: 'खेतों के क्रमिक पड़ाव',
     scanQr: 'बैच QR स्कैन करें',
     callFarmer: 'किसान को कॉल करें',
-    proceedToDelivery: 'मंडी हैंडओवर के लिए आगे बढ़ें',
+    proceedToDelivery: 'थोक खरीदार डिलीवरी के लिए आगे बढ़ें',
     geofenceCheckPassed: 'जियोफेंस जांच सफल (100 मीटर के भीतर)',
     producePhoto: 'अनलोडेड माल की अनिवार्य फोटो',
     buyerOtp: 'खरीदार का 4 अंकों का हैंडओवर ओटीपी दर्ज करें',
@@ -171,6 +200,15 @@ class AppStrings {
     tonKmFormulaTitle: 'साझा रूट भाड़ा विभाजन (टन-किमी)',
     tonKmFormulaDesc: 'किसानों में पारदर्शी लागत बंटवारा: Ci = Total Cost × (Wi × Di) / Σ (Wj × Dj)',
     listenAudio: 'आवाज में सुनें',
+    home: 'होम',
+    history: 'इतिहास',
+    earnings: 'कमाई',
+    profile: 'प्रोफाइल',
+    notifications: 'सूचनाएं',
+    markAllRead: 'सभी पढ़ें',
+    clearAll: 'सभी हटाएं',
+    bulkBuyerDelivery: 'थोक खरीदार डिलीवरी',
+    razorpaySecured: 'रेज़रपेX एस्क्रो द्वारा संचालित त्वरित भुगतान',
   );
 
   static const marathi = AppStrings(
@@ -204,7 +242,7 @@ class AppStrings {
     milestones: 'शेतकऱ्यांचे क्रमिक थांबे',
     scanQr: 'बॅच QR स्कॅन करा',
     callFarmer: 'शेतकऱ्याला कॉल करा',
-    proceedToDelivery: 'मंडी डिलिव्हरीसाठी पुढे जा',
+    proceedToDelivery: 'मोठ्या खरेदीदार डिलिव्हरीसाठी पुढे जा',
     geofenceCheckPassed: 'जिओफेन्स तपासणी यशस्वी (१०० मीटरच्या आत)',
     producePhoto: 'उतरवलेल्या मालाचा अनिवार्य फोटो',
     buyerOtp: 'खरेदीदाराचा ४ अंकी ओटीपी प्रविष्ट करा',
@@ -214,6 +252,15 @@ class AppStrings {
     tonKmFormulaTitle: 'सामायिक मार्ग भाडे वाटप (टन-किमी)',
     tonKmFormulaDesc: 'मालाचे वजन व अंतराप्रमाणे पारदर्शी वाटप: Ci = Total Cost × (Wi × Di) / Σ (Wj × Dj)',
     listenAudio: 'आवाजात ऐका',
+    home: 'होम',
+    history: 'इतिहास',
+    earnings: 'कमाई',
+    profile: 'प्रोफाइल',
+    notifications: 'सूचना',
+    markAllRead: 'सर्व वाचले',
+    clearAll: 'सर्व हटवा',
+    bulkBuyerDelivery: 'मोठ्या खरेदीदार डिलिव्हरी',
+    razorpaySecured: 'रेझरपेX एस्क्रो द्वारे त्वरित मोबदला',
   );
 
   static const tamil = AppStrings(
@@ -247,7 +294,7 @@ class AppStrings {
     milestones: 'பண்ணை நிறுத்தங்கள்',
     scanQr: 'தொகுதி QR ஸ்கேன்',
     callFarmer: 'விவசாயியை அழைக்கவும்',
-    proceedToDelivery: 'மண்டி டெலிவரிக்கு செல்லவும்',
+    proceedToDelivery: 'மொத்த வாங்குபவர் டெலிவரிக்கு செல்லவும்',
     geofenceCheckPassed: 'ஜியோஃபென்ஸ் சரிபார்ப்பு வெற்றி (100மீ)',
     producePhoto: 'இறக்கப்பட்ட பயிர் புகைப்படம்',
     buyerOtp: 'வாங்குபவர் 4 இலக்க OTP',
@@ -257,6 +304,15 @@ class AppStrings {
     tonKmFormulaTitle: 'நியாயமான கட்டணப் பகிர்வு (டன்-கிமீ)',
     tonKmFormulaDesc: 'விவசாயிகளிடையே நியாயமான கட்டணப் பகிர்வு: Ci = Total Cost × (Wi × Di) / Σ (Wj × Dj)',
     listenAudio: 'ஒலியில் கேட்கவும்',
+    home: 'முகப்பு',
+    history: 'வரலாறு',
+    earnings: 'வருவாய்',
+    profile: 'சுயவிவரம்',
+    notifications: 'அறிவிப்புகள்',
+    markAllRead: 'அனைத்தும் படி',
+    clearAll: 'அனைத்தும் அழி',
+    bulkBuyerDelivery: 'மொத்த வாங்குபவர் டெலிவரி',
+    razorpaySecured: 'ரேசர்பேX எஸ்க்ரோ உடனடி பணப்பட்டுவாடா',
   );
 
   static const telugu = AppStrings(
@@ -290,7 +346,7 @@ class AppStrings {
     milestones: 'రైతు గేట్ స్టాప్‌లు',
     scanQr: 'బ్యాచ్ QR స్కాన్ చేయండి',
     callFarmer: 'రైతుకు కాల్ చేయండి',
-    proceedToDelivery: 'మండి డెలివరీకి వెళ్లండి',
+    proceedToDelivery: 'బల్క్ కొనుగోలుదారు డెలివరీకి వెళ్లండి',
     geofenceCheckPassed: 'జియోఫెన్స్ తనిఖీ పాస్ (100 మీటర్లలోపు)',
     producePhoto: 'దిగుమతి చేసిన సరుకు ఫోటో',
     buyerOtp: 'కొనుగోలుదారు 4-అంకెల OTP',
@@ -300,6 +356,15 @@ class AppStrings {
     tonKmFormulaTitle: 'న్యాయమైన ఛార్జీల విభజన (టన్-కిమీ)',
     tonKmFormulaDesc: 'రైతుల మధ్య పారదర్శక పంపిణీ: Ci = Total Cost × (Wi × Di) / Σ (Wj × Dj)',
     listenAudio: 'వాయిస్‌లో వినండి',
+    home: 'హోమ్',
+    history: 'చరిత్ర',
+    earnings: 'ఆదాయం',
+    profile: 'ప్రొఫైల్',
+    notifications: 'నోటిఫికేషన్లు',
+    markAllRead: 'అన్నీ చదివినట్లు',
+    clearAll: 'అన్నీ తొలగించు',
+    bulkBuyerDelivery: 'బల్క్ కొనుగోలుదారు డెలివరీ',
+    razorpaySecured: 'రేజర్‌పేX ఎస్క్రో తక్షణ చెల్లింపులు',
   );
 
   static const kannada = AppStrings(
@@ -333,7 +398,7 @@ class AppStrings {
     milestones: 'ರೈತರ ನಿಲ್ದಾಣಗಳು',
     scanQr: 'ಬ್ಯಾಚ್ ಕ್ಯೂಆರ್ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ',
     callFarmer: 'ರೈತರಿಗೆ ಕರೆ ಮಾಡಿ',
-    proceedToDelivery: 'ಮಂಡಿ ಡೆಲಿವರಿಗೆ ಮುಂದುವರಿಯಿರಿ',
+    proceedToDelivery: 'ಬಲ್ಕ್ ಖರೀದಿದಾರರ ಡೆಲಿವರಿಗೆ ಮುಂದುವರಿಯಿರಿ',
     geofenceCheckPassed: 'ಜಿಯೋಫೆನ್ಸ್ ಪರಿಶೀಲನೆ ಯಶಸ್ವಿ (100 ಮೀ ಒಳಗೆ)',
     producePhoto: 'ಇಳಿಸಲಾದ ಬೆಳೆಯ ಕಡ್ಡಾಯ ಫೋಟೋ',
     buyerOtp: 'ಖರೀದಿದಾರರ 4-ಅಂಕಿಯ OTP',
@@ -343,6 +408,15 @@ class AppStrings {
     tonKmFormulaTitle: 'ನ್ಯಾಯಯುತ ಶುಲ್ಕ ಹಂಚಿಕೆ (ಟನ್-ಕಿಮೀ)',
     tonKmFormulaDesc: 'ರೈತರ ನಡುವೆ ಪಾರದರ್ಶಕ ವೆಚ್ಚ ಹಂಚಿಕೆ: Ci = Total Cost × (Wi × Di) / Σ (Wj × Dj)',
     listenAudio: 'ಧ್ವನಿಯಲ್ಲಿ ಆಲಿಸಿ',
+    home: 'ಮುಖಪುಟ',
+    history: 'ಇತಿಹಾಸ',
+    earnings: 'ಗಳಿಕೆ',
+    profile: 'ಪ್ರೊಫೈಲ್',
+    notifications: 'ಅಧಿಸೂಚನೆಗಳು',
+    markAllRead: 'ಎಲ್ಲವನ್ನೂ ಓದಿದೆ',
+    clearAll: 'ಎಲ್ಲವನ್ನೂ ತೆರವುಗೊಳಿಸಿ',
+    bulkBuyerDelivery: 'ಬಲ್ಕ್ ಖರೀದಿದಾರರ ವಿತರಣೆ',
+    razorpaySecured: 'ರೇಜರ್‌ಪೇX ಎಸ್ಕ್ರೋ ತಕ್ಷಣದ ಪಾವತಿಗಳು',
   );
 
   static AppStrings forLanguage(String code) {

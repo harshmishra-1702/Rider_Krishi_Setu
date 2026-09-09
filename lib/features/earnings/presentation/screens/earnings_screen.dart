@@ -81,8 +81,8 @@ class EarningsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
 
-            // ── Ton-Km Cost Splitting Formula Banner ─────────────────
-            _buildTonKmFormulaBanner(context, strings),
+            // ── RazorpayX Escrow Security & Payout Benefits Card ──────
+            _buildRazorpayEscrowSecurityCard(context, strings),
             const SizedBox(height: 20),
 
             // ── Current / Recent Completed Trip Breakdown ─────────────
@@ -176,11 +176,11 @@ class EarningsScreen extends ConsumerWidget {
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.lock_clock, color: AppColors.accentLight, size: 14),
+                    Icon(Icons.shield_outlined, color: AppColors.accentLight, size: 14),
                     SizedBox(width: 4),
                     Text(
-                      'Smart Escrow Secured',
-                      style: TextStyle(color: Colors.white, fontSize: 11),
+                      'RazorpayX Escrow Secured',
+                      style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -226,13 +226,20 @@ class EarningsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTonKmFormulaBanner(BuildContext context, AppStrings strings) {
+  Widget _buildRazorpayEscrowSecurityCard(BuildContext context, AppStrings strings) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFF0C2340).withOpacity(0.18)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,76 +247,153 @@ class EarningsScreen extends ConsumerWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFF0C2340).withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.account_balance, color: AppColors.primary, size: 20),
+                child: const Icon(Icons.verified_user, color: Color(0xFF0C2340), size: 22),
               ),
-              const SizedBox(width: 10),
-              const Expanded(
-                child: Text(
-                  'Combined Logistics Pot & Ton-Km Model',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                  ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Guaranteed Escrow Payouts',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      '100% Pre-funded by Bulk Buyers prior to dispatch',
+                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          _buildBenefitRow(
+            icon: Icons.bolt,
+            iconColor: Colors.amber.shade700,
+            title: 'Instant Bank & UPI Settlement',
+            subtitle: 'Funds released within 5 seconds of Buyer Handover OTP verification.',
+          ),
           const SizedBox(height: 10),
+          _buildBenefitRow(
+            icon: Icons.shield,
+            iconColor: AppColors.primary,
+            title: 'Zero Payment Default Risk',
+            subtitle: 'Escrow pot locks 100% of driver earnings before you begin loading.',
+          ),
+          const SizedBox(height: 10),
+          _buildBenefitRow(
+            icon: Icons.local_gas_station,
+            iconColor: AppColors.statusOnline,
+            title: 'Transparent Distance & Fuel Tariffs',
+            subtitle: 'Calculated dynamically based on real ton-km payload and travel time.',
+          ),
+          const SizedBox(height: 16),
+          // Razorpay Trust Badge Footer
           Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(8),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0C2340), Color(0xFF1E3A8A)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Combined Pot = Buyer Fee + ∑ Farmer Pooled Share',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.flash_on, color: Colors.amber, size: 16),
+                const SizedBox(width: 6),
+                const Text(
+                  'Powered by',
                   style: TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
+                    color: Colors.white70,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  'Farmer Share (Fi) = L_farmers × (Wi × Di) / ∑(Wj × Dj)',
-                  style: TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.accent,
+                const SizedBox(width: 5),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0284C7),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    'RazorpayX',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  'Driver Payout = Combined Pot − Platform Fee (~8%)',
+                const SizedBox(width: 6),
+                const Text(
+                  'Smart Escrow',
                   style: TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.statusDelivered,
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+                const SizedBox(width: 8),
+                const Icon(Icons.lock, color: Colors.white70, size: 13),
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Built-in transaction model (Porter/WheelsEye/Dunzo style). Zero out-of-pocket extra costs; driver is paid immediately from the escrow pot upon delivery confirmation.',
-            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildBenefitRow({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: iconColor, size: 18),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  color: AppColors.textSecondary,
+                  height: 1.3,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

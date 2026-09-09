@@ -33,7 +33,7 @@ class _TripHistoryScreenState extends ConsumerState<TripHistoryScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Ride & Trip History'),
+        title: Text(strings.history),
         backgroundColor: AppColors.primary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),

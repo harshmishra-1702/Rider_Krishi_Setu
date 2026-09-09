@@ -92,7 +92,7 @@ class TripEarningsRecord {
     required this.totalPayout,
     required this.status,
     required this.createdAt,
-    this.destinationName = 'Nashik APMC Mandi',
+    this.destinationName = 'Reliance Fresh Regional DC, Dock 3',
     this.durationMin = 135,
     this.distanceKm = 46.5,
     this.vehicleTier = 'Tata Ace (Small)',
@@ -121,7 +121,7 @@ class TripEarningsRecord {
       createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ??
           DateTime.now(),
       destinationName:
-          json['destination_name'] as String? ?? 'Nashik APMC Mandi, Dock 4',
+          json['destination_name'] as String? ?? 'Reliance Fresh Regional DC, Dock 3',
       durationMin: json['duration_min'] as int? ?? 135,
       distanceKm: (json['distance_km'] as num?)?.toDouble() ?? 46.5,
       vehicleTier: json['vehicle_tier'] as String? ?? 'Tata Ace (Small)',

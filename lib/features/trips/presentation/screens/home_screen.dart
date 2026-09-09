@@ -14,6 +14,8 @@ import '../providers/trip_providers.dart';
 import '../widgets/trip_offer_bottom_sheet.dart';
 import '../widgets/driver_status_header.dart';
 import '../../../../core/widgets/language_bottom_sheet.dart';
+import '../../../notifications/presentation/providers/notification_providers.dart';
+import '../../../notifications/presentation/widgets/notification_sheet.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -89,6 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final locationAsync = ref.watch(locationStreamProvider);
 
     final driver = authState is AuthAuthenticated ? authState.driver : null;
+    final unreadNotifs = ref.watch(unreadNotificationsCountProvider);
 
     // Center map on driver position if stream fires
     locationAsync.whenData((pos) {
@@ -97,29 +100,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       } catch (_) {}
     });
 
-    final screenHeight = MediaQuery.of(context).size.height;
-    // Responsive map height (48% of screen) to prevent pixel overflow on 360x640 screens
-    final mapHeight = screenHeight * 0.48;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          // ── Map Viewport ──────────────────────────────────────────
-          SizedBox(
-            height: mapHeight,
+          // ── Map Viewport (Full edge-to-edge) ──────────────────────
+          Positioned.fill(
             child: _buildMap(locationAsync),
           ),
 
           // ── Status Header Overlay ─────────────────────────────────
-          SafeArea(
-            child: DriverStatusHeader(
-              driver: driver,
-              isOnline: isOnline,
-              onlineLabel: strings.online,
-              offlineLabel: strings.offline,
-              onLanguageTap: () => showLanguageBottomSheet(context, ref),
-              onSupportTap: () => context.push('/complaint'),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: DriverStatusHeader(
+                driver: driver,
+                isOnline: isOnline,
+                onlineLabel: strings.online,
+                offlineLabel: strings.offline,
+                unreadNotificationsCount: unreadNotifs,
+                onNotificationTap: () => showNotificationsBottomSheet(context),
+                onLanguageTap: () => showLanguageBottomSheet(context, ref),
+                onSupportTap: () => context.push('/complaint'),
               onToggleOnline: () {
                 final nextOnlineState = !isOnline;
                 ref.read(isDriverOnlineProvider.notifier).state = nextOnlineState;
@@ -142,6 +146,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
             ),
           ),
+        ),
 
           // ── 10s Countdown Banner (when searching nearby routes) ──
           if (_isSearching && isOnline)
@@ -208,7 +213,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // (User Request: "if we cancel it, it goes away and display a small transparent button to load the accept ride simulation again")
           if (_showTransparentButton && isOnline && activeTrip != null && activeTrip.status == TripStatus.assigned)
             Positioned(
-              top: mapHeight - 52,
+              bottom: 240,
               left: 20,
               right: 20,
               child: Center(
@@ -266,31 +271,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: AppColors.surface,
         surfaceTintColor: Colors.transparent,
         destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home, color: AppColors.primary),
-            label: 'Home',
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home, color: AppColors.primary),
+            label: strings.home,
           ),
           NavigationDestination(
             icon: const Icon(Icons.route_outlined),
             selectedIcon: const Icon(Icons.route, color: AppColors.primary),
             label: strings.routePlan,
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.history_outlined),
-            selectedIcon: Icon(Icons.history, color: AppColors.primary),
-            label: 'History',
+          NavigationDestination(
+            icon: const Icon(Icons.history_outlined),
+            selectedIcon: const Icon(Icons.history, color: AppColors.primary),
+            label: strings.history,
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.account_balance_wallet_outlined),
+          NavigationDestination(
+            icon: const Icon(Icons.account_balance_wallet_outlined),
             selectedIcon:
-                Icon(Icons.account_balance_wallet, color: AppColors.primary),
-            label: 'Earnings',
+                const Icon(Icons.account_balance_wallet, color: AppColors.primary),
+            label: strings.earnings,
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.person_outlined),
-            selectedIcon: Icon(Icons.person, color: AppColors.primary),
-            label: 'Profile',
+          NavigationDestination(
+            icon: const Icon(Icons.person_outlined),
+            selectedIcon: const Icon(Icons.person, color: AppColors.primary),
+            label: strings.profile,
           ),
         ],
         onDestinationSelected: (index) {
@@ -638,7 +643,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     context.push('/otp-delivery');
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Simulated all farm pickups done. Ready for Mandi handover!'),
+                        content: Text('Simulated all farm pickups done. Proceeding to Bulk Buyer delivery!'),
                         backgroundColor: AppColors.primary,
                       ),
                     );

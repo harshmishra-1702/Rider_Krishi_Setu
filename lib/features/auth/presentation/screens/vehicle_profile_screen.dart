@@ -1,4 +1,4 @@
-﻿// lib/features/auth/presentation/screens/vehicle_profile_screen.dart
+// lib/features/auth/presentation/screens/vehicle_profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,16 +31,16 @@ class _VehicleProfileScreenState
   final _upiController = TextEditingController();
 
   VehicleTier _selectedTier = VehicleTier.small;
-  String _selectedMandiHub = 'Nashik APMC Mandi (Central Yard)';
+  String _selectedClusterHub = 'Reliance Fresh & Retail DCs (Nashik-Igatpuri)';
   bool _isReeferInsulated = false;
 
-  final List<String> _mandiHubs = [
-    'Nashik APMC Mandi (Central Yard)',
-    'Pimpalgaon Baswant Onion & Grape Hub',
-    'Dindori Pre-Cooling & Horticulture Hub',
-    'Vashi Mega APMC Terminal (Navi Mumbai)',
-    'Pune Gultekdi Market Yard',
-    'Lasalgaon Asia Largest Onion Market',
+  final List<String> _clusterHubs = [
+    'Reliance Fresh & Retail DCs (Nashik-Igatpuri)',
+    'Blinkit & Zepto Dark Store Cluster (Nashik Central)',
+    'Institutional Kitchens & University Hostel Messes',
+    'BigBasket Fulfillment Warehouses (Ambad MIDC)',
+    'Zomato Hyperpure Farm Aggregation Hub',
+    'Pune Mega Dark Store & Wholesale Cluster',
   ];
 
   @override
@@ -201,7 +201,7 @@ class _VehicleProfileScreenState
                         ),
                         SizedBox(height: 2),
                         Text(
-                          'Complete your 1-time profile to accept pooled farm-to-mandi pickup routes.',
+                          'Complete your 1-time profile to accept pooled farm-to-bulk-buyer delivery routes.',
                           style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
                         ),
                       ],
@@ -313,8 +313,8 @@ class _VehicleProfileScreenState
               ),
             ),
 
-            // Section 3: Payout & Primary Mandi Logistics Hub
-            _buildSectionHeader('3. Payout & Operational Mandi Hub'),
+            // Section 3: Payout & Primary Delivery Cluster Hub
+            _buildSectionHeader('3. Payout & Operating Delivery Cluster'),
             Card(
               margin: const EdgeInsets.only(top: 8, bottom: 20),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -333,21 +333,31 @@ class _VehicleProfileScreenState
                     ),
                     const SizedBox(height: 14),
                     const Text(
-                      'Primary Operating Mandi Hub',
+                      'Primary Operating Bulk Buyer Cluster',
                       style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
                     ),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
-                      value: _selectedMandiHub,
+                      value: _selectedClusterHub,
+                      isExpanded: true,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.hub, color: AppColors.primary),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         filled: true,
                         fillColor: AppColors.surface,
                       ),
-                      items: _mandiHubs.map((h) => DropdownMenuItem(value: h, child: Text(h, style: const TextStyle(fontSize: 13)))).toList(),
+                      items: _clusterHubs
+                          .map((h) => DropdownMenuItem(
+                                value: h,
+                                child: Text(
+                                  h,
+                                  style: const TextStyle(fontSize: 13),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ))
+                          .toList(),
                       onChanged: (val) {
-                        if (val != null) setState(() => _selectedMandiHub = val);
+                        if (val != null) setState(() => _selectedClusterHub = val);
                       },
                     ),
                   ],

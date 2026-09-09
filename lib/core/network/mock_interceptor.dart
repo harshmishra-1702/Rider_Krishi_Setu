@@ -92,7 +92,7 @@ class MockInterceptor extends Interceptor {
         method == 'POST') {
       return handler.resolve(_mockResponse(options, {
         'success': true,
-        'photo_url': 'https://cdn.krishisetu.dev/proofs/mandi_dock_unloaded_produce.jpg',
+        'photo_url': 'https://cdn.krishisetu.dev/proofs/buyer_dock_unloaded_produce.jpg',
       }));
     }
 
@@ -194,12 +194,59 @@ class MockInterceptor extends Interceptor {
         'distance_km': 46.5,
         'assigned_at': DateTime.now().toIso8601String(),
         'destination': {
-          'name': 'Nashik APMC Mandi',
-          'address': 'Market Yard, Dindori Road, Nashik-422001',
+          'name': 'Reliance Fresh Regional Distribution Center, Dock 3',
+          'address': 'Plot B-14, Mega Logistics Park, Igatpuri-Nashik Highway-422403',
           'latitude': 20.0059,
           'longitude': 73.7799,
           'contact': '+912536002345',
         },
+        'delivery_stops': [
+          {
+            'stop_id': 'DELIV-001',
+            'stop_order': 4,
+            'buyer_name': 'Reliance Fresh Regional DC, Dock 3',
+            'buyer_type': 'Retail Supermarket DC',
+            'address': 'Plot B-14, Mega Logistics Park, Igatpuri-Nashik Highway',
+            'contact_phone': '+912536002345',
+            'latitude': 20.0059,
+            'longitude': 73.7799,
+            'weight_kg': 500.0,
+            'crop_name': 'Tomatoes',
+            'batch_id': '#4092',
+            'is_delivered': false,
+            'handover_otp': '4092',
+          },
+          {
+            'stop_id': 'DELIV-002',
+            'stop_order': 5,
+            'buyer_name': 'Blinkit Quick-Commerce Dark Store #12',
+            'buyer_type': 'Quick-Commerce Dark Store',
+            'address': 'Gangapur Road, College Area, Nashik-422005',
+            'contact_phone': '+919822114455',
+            'latitude': 20.0125,
+            'longitude': 73.7650,
+            'weight_kg': 750.0,
+            'crop_name': 'Red Onions',
+            'batch_id': '#7183',
+            'is_delivered': false,
+            'handover_otp': '7183',
+          },
+          {
+            'stop_id': 'DELIV-003',
+            'stop_order': 6,
+            'buyer_name': 'Symbiosis Hostel Mega-Mess Central Kitchen',
+            'buyer_type': 'University Hostel Mess',
+            'address': 'Symbiosis Campus, Lavale/Gangapur Road',
+            'contact_phone': '+919833221100',
+            'latitude': 20.0240,
+            'longitude': 73.7510,
+            'weight_kg': 750.0,
+            'crop_name': 'Thompson Grapes',
+            'batch_id': '#8821',
+            'is_delivered': false,
+            'handover_otp': '8821',
+          },
+        ],
         'waypoints': [
           {
             'stop_id': 'STOP-001',
@@ -293,7 +340,7 @@ class MockInterceptor extends Interceptor {
         'distance_km': 185.0,
         'assigned_at': DateTime.now().toIso8601String(),
         'destination': {
-          'name': 'Vashi APMC Mega Mandi',
+          'name': 'Reliance Fresh Mega Fulfilment Center, Navi Mumbai',
           'address': 'Sector 19, Turbhe, Navi Mumbai-400703',
           'latitude': 19.0760,
           'longitude': 72.9980,
@@ -490,7 +537,7 @@ class MockInterceptor extends Interceptor {
         'created_at': DateTime.now()
             .subtract(const Duration(hours: 2))
             .toIso8601String(),
-        'destination_name': 'Nashik APMC Mandi, Dock 3',
+        'destination_name': 'Reliance Fresh Regional DC, Dock 3',
         'duration_min': 85,
         'distance_km': 46.5,
         'vehicle_tier': 'Tata Ace Gold (Small)',
@@ -535,10 +582,10 @@ class MockInterceptor extends Interceptor {
             'date': DateTime.now().subtract(const Duration(hours: 3)).toIso8601String(),
           },
           {
-            'author': 'Nashik APMC Receiving Supervisor',
+            'author': 'Reliance Fresh Inward Lead',
             'rating': 4.9,
             'comment': 'Prompt unloading and accurate batch verification with permanent marker IDs matched.',
-            'role': 'Buyer / Mandi',
+            'role': 'Bulk Buyer • Retail DC',
             'date': DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
           },
         ],
@@ -552,7 +599,7 @@ class MockInterceptor extends Interceptor {
         'created_at': DateTime.now()
             .subtract(const Duration(days: 1))
             .toIso8601String(),
-        'destination_name': 'Pimpalgaon Sub-Mandi Hub',
+        'destination_name': 'Blinkit Quick-Commerce Dark Store Hub #12',
         'duration_min': 70,
         'distance_km': 40.0,
         'vehicle_tier': 'Mahindra Bolero Maxi (Small)',

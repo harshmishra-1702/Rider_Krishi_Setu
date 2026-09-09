@@ -20,14 +20,14 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
   final _formKey = GlobalKey<FormState>();
   final _descriptionController = TextEditingController();
 
-  String _selectedCategory = 'Mandi Dock Unloading Delay';
+  String _selectedCategory = 'Bulk Buyer / Dark Store Receiving Delay';
   String _selectedUrgency = 'High (Dock Blocked / Delay)';
-  String _selectedTrip = 'TRIP-KS-8921 (Nashik APMC Mandi)';
+  String _selectedTrip = 'TRIP-KS-8921 (Reliance Fresh DC)';
   bool _hasPhotoProof = false;
   bool _isSubmitting = false;
 
   final List<String> _categories = [
-    'Mandi Dock Unloading Delay',
+    'Bulk Buyer / Dark Store Receiving Delay',
     'Produce Weight / Deduction Dispute',
     'Road Blockage / Inaccessible Farm Route',
     'Fair Payout (Ton-Km) Calculation Query',
@@ -127,7 +127,7 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
             ),
             const SizedBox(height: 10),
             const Text(
-              'An Operations Executive will contact you and the mandi gate supervisor within 15 minutes.',
+              'An Operations Executive will contact you and the bulk buyer receiving supervisor within 15 minutes.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 11, color: AppColors.accent, fontWeight: FontWeight.w600),
             ),
@@ -265,15 +265,15 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
                   )
                 else
                   const DropdownMenuItem(
-                    value: 'TRIP-KS-8921 (Nashik APMC Mandi)',
-                    child: Text('TRIP-KS-8921 (Active Nashik Mandi)'),
+                    value: 'TRIP-KS-8921 (Reliance Fresh DC)',
+                    child: Text('TRIP-KS-8921 (Active Reliance Fresh DC)'),
                   ),
                 const DropdownMenuItem(
-                  value: 'TRIP-KS-8840 (Pimpalgaon Sub-Mandi)',
+                  value: 'TRIP-KS-8840 (Blinkit Dark Store Hub)',
                   child: Text('TRIP-KS-8840 (Past Settle)'),
                 ),
                 const DropdownMenuItem(
-                  value: 'TRIP-KS-8715 (Dindori Pre-Cooling)',
+                  value: 'TRIP-KS-8715 (Symbiosis Hostel Mess)',
                   child: Text('TRIP-KS-8715 (Past Settle)'),
                 ),
                 const DropdownMenuItem(
@@ -349,7 +349,7 @@ class _ComplaintScreenState extends ConsumerState<ComplaintScreen> {
                 return null;
               },
               decoration: InputDecoration(
-                hintText: 'e.g., APMC Mandi gate entry dock 3 has been stalled for 1.5 hours without unloading receipt, or weighbridge deduction discrepancy...',
+                hintText: 'e.g., Reliance Fresh DC dock 3 has been stalled for 1.5 hours without unloading receipt, or Dark Store receiving dispute...',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 filled: true,
                 fillColor: AppColors.surface,

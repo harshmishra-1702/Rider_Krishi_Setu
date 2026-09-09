@@ -114,7 +114,30 @@ class ActiveTripNotifier extends StateNotifier<RideTrip?> {
     if (state == null) return;
     final updated =
         state!.waypoints.map((w) => w.copyWith(isDeliveryVerified: true)).toList();
-    state = state!.copyWith(waypoints: updated);
+    final updatedDeliveries = state!.deliveryStops
+        .map((d) => d.copyWith(isDelivered: true, deliveredAt: DateTime.now()))
+        .toList();
+    state = state!.copyWith(
+      waypoints: updated,
+      deliveryStops: updatedDeliveries,
+    );
+  }
+
+  void markDeliveryStopCompleted(String stopId) {
+    if (state == null) return;
+    final updatedStops = state!.deliveryStops.map((d) {
+      if (d.stopId == stopId) {
+        return d.copyWith(isDelivered: true, deliveredAt: DateTime.now());
+      }
+      return d;
+    }).toList();
+
+    final allDone = updatedStops.every((d) => d.isDelivered);
+    state = state!.copyWith(
+      deliveryStops: updatedStops,
+      status: allDone ? TripStatus.delivered : TripStatus.inTransit,
+      completedAt: allDone ? DateTime.now() : null,
+    );
   }
 
   void clearTrip() => state = null;

@@ -65,7 +65,7 @@ class _PhotoCaptureScreenState extends ConsumerState<PhotoCaptureScreen> {
                   SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Capture a clear photo of the unloaded agricultural produce at the buyer/mandi receiving dock.',
+                      'Capture a clear photo of the unloaded agricultural produce at the bulk buyer receiving dock / dark store bay.',
                       style: TextStyle(
                         fontSize: 13,
                         color: AppColors.textPrimary,
