@@ -262,14 +262,17 @@ class TripDetailSheet extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-            color: AppColors.textPrimary,
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+              color: AppColors.textPrimary,
+            ),
           ),
         ),
+        const SizedBox(width: 8),
         Text(
           value,
           style: TextStyle(
@@ -309,9 +312,12 @@ class TripDetailSheet extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      split.farmerName,
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                    Flexible(
+                      child: Text(
+                        split.farmerName,
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -370,9 +376,12 @@ class TripDetailSheet extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Text(
-                review.author,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+              Flexible(
+                child: Text(
+                  review.author,
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const SizedBox(width: 6),
               Container(
